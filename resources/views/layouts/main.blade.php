@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="{{App::getLocale()}}">
   <head>
   	<title>@yield('title') - Portal Examen</title>
     <meta charset="utf-8">
@@ -11,6 +11,7 @@
     
     <link rel="shortcut icon" href="{{('/images/icono.png')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{asset('/fonts/font-awesome/css/font-awesome.min.css')}}">
+    <link rel="stylesheet" href="{{asset('/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('/css/jquery.toast.css')}}">
     <link rel="stylesheet" href="{{asset('/css/style.css')}}">
     @yield('styles')
@@ -37,33 +38,29 @@
 	            </ul>
 	          </li> --}}
 	          <li>
-              <a href="{{route('index')}}">Inicio</a>
+              <a href="{{route('panel_usuarios')}}">Inicio</a>
             </li>
             <li>
-              <a href="/examenes">Examenes</a>
+              <a href="{{route('materias')}}">Materias</a>
             </li>
-	          <li>
-              <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>
-              <ul class="collapse list-unstyled" id="pageSubmenu">
+            <li>
+              <a href="#examenSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Examenes</a>
+              <ul class="collapse list-unstyled" id="examenSubmenu">
                 <li>
-                    <a href="#">Page 1</a>
+                    <a href="/examenes">Todos</a>
                 </li>
                 <li>
-                    <a href="#">Page 2</a>
+                    <a href="/examenes/create">Nuevo Examen</a>
                 </li>
                 <li>
-                    <a href="#">Page 3</a>
+                    <a href="#">Completados</a>
                 </li>
               </ul>
-	          </li>
-	          <li>
-              <a href="#">Portfolio</a>
-	          </li>
-	          <li>
-              <a href="#">Contact</a>
-	          </li>
+            </li>
+            <li>
+              <a href="{{route('panel_usuarios')}}">Panel De Usuarios</a>
+            </li>
 	        </ul>
-
 	        <div class="footer">
 	        	<p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
 						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
@@ -91,8 +88,14 @@
             <div>
               <ul class="nav navbar-nav ml-auto flex-row">
                 <li class="nav-item active">
-                    <a class="nav-link" href="#">Harold Bergstrom</a>
+                  <span class="nav-link">{{Auth::user()->name}}</span>
                 </li>
+                <li class="nav-item align-self-center btn btn-link" style="cursor: pointer">
+                  <i onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="fa fa-power-off" aria-hidden="true"></i>
+                </li>
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                  @csrf
+                </form> 
               </ul>
             </div>
           </div>
@@ -107,10 +110,15 @@
     <script src="{{asset('/js/jquery.js')}}"></script>
     <script src="{{asset('/js/popper.js')}}"></script>
     <script src="{{asset('/js/bootstrap.min.js')}}"></script>
+    <script src="{{asset('/js/jquery.dataTables.min.js')}}"></script>
+    <script src="{{asset('/js/dataTables.bootstrap4.min.js')}}"></script>
     <script src="{{asset('/plugins/MDB/js/mdb.min.js')}}"></script>
     <script src="{{asset('/js/vue.js')}}"></script>
     <script src="{{asset('/js/vee-validate.js')}}"></script>
     <script src="{{asset('/js/jquery.toast.js')}}"></script>
+    <script src="{{asset('/js/moment.js')}}"></script>
+    <script src="{{asset('/js/axios.js')}}"></script>
+    <script src="{{asset('/js/sweetalert.min.js')}}"></script>
     
     <script src="{{asset('/js/main.js')}}"></script>
 
