@@ -53,10 +53,7 @@
                                     <label for="">Facilitador:</label>
                                     <select v-validate="'required'" v-model="materia.facilitador" name="facilitator" id="" class="form-control single-input-form">
                                         <option disabled value="">Selecciona facilitador</option>
-                                        <option value="1">laborum at assumenda</option>
-                                        <option value="2">omnis velit modi</option>
-                                        <option value="3">consequatur veritatis eius</option>
-                                        <option value="4">exercitationem velit doloremque</option>
+                                        <option v-for="facilitador in facilitadores" :value="facilitador.id">@{{facilitador.name}}</option>
                                     </select>
                                     <span class="text-danger" style="font-size: 12px;" v-show="errors.has('facilitator')">* @{{ errors.first('facilitator') }}</span>
                                 </div>
@@ -79,11 +76,13 @@
         Vue.use(VeeValidate);
 
         var materias = {!! json_encode($materias) !!} 
-
+        var facilitadores = {!! json_encode($facilitadores) !!} 
+        
         var main = new Vue({
             el: 'main',
             data: {
                 materias : materias,
+                facilitadores : facilitadores,
                 materia: {
                     nombre : '',
                     facilitador : '',
@@ -92,7 +91,17 @@
                 current_materia : null,
             },
             mounted: function(){
+                var _this = this;
                 this.initDataTable();
+                setTimeout(function(){
+                    $('.custom-control-input').on('change', function(){
+                        var _this_ = _this;
+                        var coming_values = $(this).attr('info_input').split(',');
+                        var activo = $(this).prop("checked");
+
+                        _this_.updateCampo(coming_values[0], coming_values[1], activo)
+                    });
+                }, 1000);
             },
             watch: {
                 materias : function(val){
@@ -131,6 +140,15 @@
                     setTimeout(function() {
                         _this.errors.clear();
                     }, 100);
+                },
+                updateCampo: function(campo, id, estado){
+                    estado = estado ? 1 : 0;
+
+                    axios.post(homepath + '/materias/update_campo/' + campo + '/' + id + '/' + estado).then(function(response){
+
+                    }).catch(function(error){
+                        console.log(error)
+                    });
                 },
                 agregarMateria: function(){
                     var _this = this;
@@ -179,14 +197,14 @@
                         columns: [
                             {data : 'id'},
                             {data : 'materia'},
-                            {data : 'facilitador_id'},
+                            {data : 'facilitador.name'},
                             {
-                                data: 'status',
-                                render: function(data, row){
-                                    if(data == 1){
-                                        return '<i class="fa fa-circle text-success" aria-hidden="true"></i>'
+                                // data: 'status',
+                                render: function(data, type, row){
+                                    if(row.status == 1){
+                                        return "<div class='custom-control custom-switch'><input type='checkbox' info_input='status," + row.id + "' class='custom-control-input' id='estado"+ row.id +"' checked><label class='custom-control-label' for='estado"+ row.id +"'></label></div>"
                                     }else{
-                                        return '<i class="fa fa-circle text-secondary" aria-hidden="true"></i>'
+                                        return "<div class='custom-control custom-switch'><input type='checkbox' info_input='status," + row.id + "' class='custom-control-input' id='estado"+ row.id +"'><label class='custom-control-label' for='estado"+ row.id +"'></label></div>"
                                     }
                                 }
                             },

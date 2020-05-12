@@ -24,15 +24,19 @@ Route::group(['middleware' => ['auth']], function(){
     Route::group(['prefix' => 'usuarios'], function(){
         Route::get('/', 'HomeController@panel_usuarios')->name('panel_usuarios');
         Route::post('/update_rol/{role}/{id}/{estado}', 'HomeController@update_rol');
+        Route::post('/update_estudiante/{id}/{materia}', 'HomeController@update_estudiante');
     });
     
     Route::group(['prefix' => 'examenes'], function(){
         Route::get('/', 'ExamenController@all');
         Route::get('/create', 'ExamenController@create');
+        Route::get('/completados', 'ExamenController@all_completados');
         Route::post('/store', 'ExamenController@store');
         Route::get('/llenar/{id}', 'ExamenController@llenar_examen');
         Route::get('/completado/{id}', 'ExamenController@examen_completado');
         Route::post('/store/respuestas', 'ExamenController@store_respuestas');
+        Route::post('/update_campo/{campo}/{id}/{estado}', 'ExamenController@update_campo');
+        Route::post('/completados/update_campo/{campo}/{id}/{estado}', 'ExamenController@completados_update_campo');
     });
     
     Route::group(['prefix' => 'materias'], function(){
@@ -43,6 +47,8 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/llenar/{id}', 'MateriaController@llenar_examen');
         Route::get('/completado/{id}', 'MateriaController@examen_completado');
         Route::post('/store/respuestas', 'MateriaController@store_respuestas');
+        Route::post('/update_campo/{campo}/{id}/{estado}', 'MateriaController@update_campo');
+
     });
 });
 

@@ -1,16 +1,14 @@
 @extends('layouts.main')
-@section('title')Exámenes @endsection
+@section('title')Completados @endsection
 @section('styles')
     
 @endsection
 @section('content')
     <main>
         <div class="row mb-3">
-            <div class="col-md-12">
-                <div class="text-right border-bottom pb-3">
-                    <a :href="homepath + '/examenes/create'">
-                        <button class="btn btn-info">Crear Examen</button>
-                    </a>
+            <div class="col-12">
+                <div class="header-pages rounded text-white">
+                    <span class="text-uppercase">Examenes Completados</span>
                 </div>
             </div>
         </div>
@@ -19,10 +17,10 @@
                 <table id="table" class="table table-bordered table-hover table-sm text-center table-responsive-sm" style="width:100%">
                     <thead class="table-header bg-info text-white">
                         <tr>
-                            <th>{{__('Examen')}}</th>
                             <th>{{__('Materia')}}</th>
                             <th>{{__('Facilitador')}}</th>
-                            <th>{{__('Disponible')}}</th>
+                            <th>{{__('Estudiante')}}</th>
+                            <th>{{__('Calificacion')}}</th>
                             <th>{{__('Estado')}}</th>
                             <th>{{__('Opciones')}}</th>
                         </tr>
@@ -61,27 +59,32 @@
                 updateCampo: function(campo, id, estado){
                     estado = estado ? 1 : 0;
 
-                    axios.post(homepath + '/examenes/update_campo/' + campo + '/' + id + '/' + estado).then(function(response){
-
+                    axios.post(homepath + '/examenes/completados/update_campo/' + campo + '/' + id + '/' + estado).then(function(response){
                     }).catch(function(error){
                         console.log(error)
                     });
+                },
+                readExam: function(id){
+                    window.open(homepath + '/examenes/completado/' + id, '_blank');
+                },
+                calificarExam: function(id){
+                    console.log(id);
                 },
                 initDataTable: function(){
                     this.dt = $('#table').DataTable({
                         data : this.examenes,
                         // responsive : true,
                         columns: [
-                            {data : 'nombre'},
-                            {data : 'materia_info.materia'},
-                            {data : 'materia_info.facilitador.name'},
+                            {data : 'examen.materia_info.materia'},
+                            {data : 'examen.materia_info.facilitador.name'},
+                            {data : 'user.name'},
                             {
-                                // data : 'disponible',
-                                render: function(data, type, row){
-                                    if(row.disponible == 1){
-                                        return "<div class='custom-control custom-switch'><input type='checkbox' info_input='disponible," + row.id + "' class='custom-control-input' id='disponible"+ row.id +"' checked><label class='custom-control-label' for='disponible"+ row.id +"'></label></div>"
+                                data : 'calificacion_final',
+                                render: function(data, row){
+                                    if(data == null){
+                                        return '<p class="bg-danger btn btn-sm text-white btn-section d-inline-block mb-1 px-2 text-center">No Calificado</p>';
                                     }else{
-                                        return "<div class='custom-control custom-switch'><input type='checkbox' info_input='disponible," + row.id + "' class='custom-control-input' id='disponible"+ row.id +"'><label class='custom-control-label' for='disponible"+ row.id +"'></label></div>"
+                                        return "<p class='bg-success btn btn-sm text-white btn-section d-inline-block mb-1 px-2 text-center'>"+ data +"</p>";
                                     }
                                 }
                             },
@@ -98,7 +101,7 @@
                             {
                                 data : 'id',
                                 render: function(data, row){
-                                    return "<div class='d-flex justify-content-around'><div class='text-info' style='font-size: 1.5em;'><i onclick='main.editTemplate("+data+")' style='cursor:pointer' class='fa fa-pencil-square-o' aria-hidden='true'></i></div><div class='text-danger' style='font-size: 1.5em';><i onclick='main.deleteTemplate("+data+")' style='cursor:pointer' class='fa fa-trash' aria-hidden='true'></i></div></div>"
+                                    return "<div class='d-flex justify-content-around'><div class='text-warning' title='Calificar Examen' style='font-size: 1.5em';><i onclick='main.calificarExam("+data+")' style='cursor:pointer' class='fa fa-pencil' aria-hidden='true'></i></div><div class='text-info' title='Ver Respuestas' style='font-size: 1.5em;'><i onclick='main.readExam("+data+")' style='cursor:pointer' class='fa fa-eye' aria-hidden='true'></i></div></div>"
                                 }
                             }
                             

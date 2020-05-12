@@ -12,4 +12,9 @@ class Materia extends Model
     protected $table = 'materias';
     protected $guarded = [];
     protected $dates = ['deleted_at'];
+
+    public function facilitador()
+    {
+        return $this->belongsTo('App\User', 'facilitador_id', 'id');
+    }
 }

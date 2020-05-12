@@ -1,5 +1,5 @@
 @extends('layouts.main')
-@section('title')Nombre Materia @endsection
+@section('title'){{ $examen_completado->examen->materia_info->materia}} @endsection
 @section('styles')
     
 @endsection
@@ -23,13 +23,13 @@
                         <div class="col-md-6">
                             <div class="form-group mb-1">
                                 <label class="mb-0" for="">Estudiante:</label>
-                                <input disabled type="text" v-model="examen_info.estudiante" class="form-control single-input-form" placeholder="Coloca el nombre del examen...">
+                                <input disabled type="text" :value="examen_completado.user.name" class="form-control single-input-form" placeholder="Coloca el nombre del examen...">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="form-group mb-1">
                                 <label class="mb-0" for="">Facilitador:</label>
-                                <input disabled type="text" :value="examen_completado.examen.facilitador_id" class="form-control single-input-form" placeholder="Coloca el nombre del examen...">
+                                <input disabled type="text" :value="examen_completado.examen.materia_info.facilitador.name" class="form-control single-input-form" placeholder="Coloca el nombre del examen...">
                             </div>
                         </div>
                         <div class="col-md-6">

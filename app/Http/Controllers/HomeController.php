@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\User;
+use App\Examen;
+use App\Materia;
 
 class HomeController extends Controller
 {
@@ -12,10 +14,10 @@ class HomeController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
-        $this->middleware('auth');
-    }
+    // public function __construct()
+    // {
+    //     $this->middleware('auth');
+    // }
 
     /**
      * Show the application dashboard.
@@ -24,7 +26,10 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('index');
+        $exams = Examen::with(['materia_info' => function($materia){
+            $materia->with('facilitador')->get();
+        }])->where('status', 1)->get();
+        return view('index', compact('exams'));
     }
 
     public function home()
@@ -35,12 +40,21 @@ class HomeController extends Controller
     public function panel_usuarios()
     {
         $users = User::all();
-        return view('panel', compact('users'));
+        $materias = Materia::where('status', 1)->get();
+        return view('panel', compact('users', 'materias'));
+    }
+
+    public function update_estudiante($id, $materia)
+    {
+        return [$id, $materia];
+        $users = User::all();
+        return response()->json($users, 200);
     }
 
     public function update_rol($campo, $id, $status)
     {
         User::find($id)->update([$campo => $status ]);
-        // return [$role, $id, $status];
+        $users = User::all();
+        return response()->json($users, 200);
     }
 }

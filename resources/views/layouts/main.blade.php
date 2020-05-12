@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="{{App::getLocale()}}">
   <head>
-  	<title>@yield('title') - Portal Examen</title>
+  	<title>@yield('title') - Exams</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -38,7 +38,7 @@
 	            </ul>
 	          </li> --}}
 	          <li>
-              <a href="{{route('panel_usuarios')}}">Inicio</a>
+              <a href="{{route('index')}}">Inicio</a>
             </li>
             <li>
               <a href="{{route('materias')}}">Materias</a>
@@ -53,7 +53,7 @@
                     <a href="/examenes/create">Nuevo Examen</a>
                 </li>
                 <li>
-                    <a href="#">Completados</a>
+                    <a href="/examenes/completados">Completados</a>
                 </li>
               </ul>
             </li>
@@ -90,8 +90,8 @@
                 <li class="nav-item active">
                   <span class="nav-link">{{Auth::user()->name}}</span>
                 </li>
-                <li class="nav-item align-self-center btn btn-link" style="cursor: pointer">
-                  <i onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="fa fa-power-off" aria-hidden="true"></i>
+                <li class="nav-item align-self-center" style="cursor: pointer">
+                  <i onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="fa fa-power-off btn btn-link btn-sm text-decoration-none" aria-hidden="true"></i>
                 </li>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                   @csrf

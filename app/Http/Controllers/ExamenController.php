@@ -9,14 +9,15 @@ use App\Pregunta;
 use App\Respuesta;
 use App\ExamenCompletado;
 use App\Materia;
+use Auth;
 
 class ExamenController extends Controller
 {
     public function all()
     {
-        $examenes = Examen::with(['temas' => function($query){
-            $query->with('preguntas')->where('status', 1)->get();
-        }])->where('status', 1)->get();
+        $examenes = Examen::with(['materia_info' => function($materia){
+            $materia->with('facilitador:id,name')->get();
+        }])->get();
         return view('examenes.all_examenes', compact('examenes'));
     }
 
@@ -35,7 +36,7 @@ class ExamenController extends Controller
             'nombre' => $template_info['nombre'],
             'materia' => $template_info['materia'],
             'descripcion' => $template_info['descripcion'],
-            'facilitador_id' => 1,
+            'facilitador_id' => Auth::user()->id,
             'status' => 1,
         ];
         $examen = Examen::create($template_data);
@@ -69,7 +70,9 @@ class ExamenController extends Controller
 
     public function llenar_examen($id)
     {
-        $examen = Examen::with(['materia_info', 'temas' => function($query){
+        $examen = Examen::with(['materia_info' => function($materia){
+            $materia->with('facilitador')->get();
+        }, 'temas' => function($query){
             $query->with('preguntas')->where('status', 1)->get();
         }])->find($id);
 
@@ -86,6 +89,8 @@ class ExamenController extends Controller
             return $tema;
         });
 
+        $examen->estudiante = Auth::user()->name;
+
         return view('examenes.llenar_examen', compact('examen'));
     }
 
@@ -95,7 +100,7 @@ class ExamenController extends Controller
 
         $examen_data = [
             'template_id' => $request->examen_id,
-            'user_id' => 1,
+            'user_id' => Auth::user()->id,
             'status' => 1
         ];
         $examen_completado = ExamenCompletado::create($examen_data);
@@ -115,10 +120,22 @@ class ExamenController extends Controller
         return response()->json($examen_completado->id, 200);
     }
 
+    public function all_completados()
+    {
+        $examenes = ExamenCompletado::with(['user:id,name', 'examen' => function($examen){
+            $examen->with(['materia_info' => function($materia){
+                $materia->with('facilitador')->get();
+            }])->get();
+        }])->get();
+        return view('examenes.all_completados', compact('examenes'));
+    }
+
     public function examen_completado($id)
     {
-        $examen_completado = ExamenCompletado::with(['examen' => function($examen) use ($id){
-            $examen->with(['materia_info', 'temas' => function($tema) use ($id){
+        $examen_completado = ExamenCompletado::with(['user:id,name', 'examen' => function($examen) use ($id){
+            $examen->with(['materia_info' => function($materia){
+                $materia->with('facilitador:id,name')->get();
+            }, 'temas' => function($tema) use ($id){
                 $tema->with(['preguntas' => function($pregunta) use ($id){
                     $pregunta->with(['respuesta' => function($respuesta) use ($id){
                         $respuesta->where('examen_completado_id', $id)->get();
@@ -132,4 +149,15 @@ class ExamenController extends Controller
 
         return view('examenes.completado', compact('examen_completado'));
     }
+
+    public function update_campo($campo, $id, $status)
+    {
+        Examen::find($id)->update([$campo => $status ]);
+    }
+
+    public function completados_update_campo($campo, $id, $status)
+    {
+        ExamenCompletado::find($id)->update([$campo => $status ]);
+    }
+    
 }
