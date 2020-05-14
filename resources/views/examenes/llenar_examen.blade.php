@@ -110,12 +110,44 @@
             </div>
             <div class="col-12 mb-2">
                 <div class="text-right">
-                    <button @click="validarCompletadas()" class="btn btn-success rounded-0 ml-2">Enviar Respuestas</button>
-                    <button class="btn btn-danger rounded-0 ml-2">Salir</button>
+                    <div class="cancel_saving_button d-inline-block">
+                        <button @click="validarCompletadas()" class="btn btn-success rounded-0 ml-2">Enviar Respuestas</button>
+                        <a :href="homepath">
+                            <button class="btn btn-danger rounded-0 ml-2">Salir</button>
+                        </a>
+                    </div>
                 </div>
             </div>
         </div>
-         
+         <!-- Modal Pregunta-->
+        <div class="modal fade" data-keyboard="false" data-backdrop="static" id="AlertModal" tabindex="-1" role="dialog" aria-labelledby="AlertModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+                <div class="modal-content border-0">
+                    <div class="modal-header py-2 bg-info">
+                    </div>
+                    <div class="modal-body py-1">
+                        <section class="row">
+                            <aside class="col-md-12">
+                                <div class="align-items-center d-flex justify-content-between">
+                                    <span v-if="alert_type == 'completado'" class="font-weight-bold">Ya has completado esta prueba anteriormente.</span>
+                                    <span v-if="alert_type == 'disponible'" class="font-weight-bold">Esta prueba no se encuentra disponible.</span>
+                                    <div class="border d-inline-block m-1 ">
+                                        <a :href="homepath">
+                                            <button class="btn btn-sm btn-danger btn-section rounded-0">Regresar</button>
+                                        </a>
+                                    </div>
+                                </div>
+                            </aside>
+                        </section>
+                    </div>
+                    {{-- <div class="modal-footer">
+                        <button v-if="pregunta_view == 'create'" type="button" @click="validate(agregarPregunta)" class="btn btn-info btn-sm rounded-0">{{__('Agregar')}}</button>
+                        <button v-if="pregunta_view == 'edit'" type="button" @click="validate(updatePregunta)" class="btn btn-warning btn-sm rounded-0">{{__('Actualizar')}}</button>
+                        <button type="button" class="btn btn-danger btn-sm rounded-0" @click="closeModal()" data-dismiss="modal">{{__('Cerrar')}}</button>
+                    </div> --}}
+                </div>
+            </div>
+        </div>
     </main>
 @endsection
 
@@ -138,11 +170,13 @@
         }
 
         var examen = {!! json_encode($examen) !!}
+        var completado = {!! json_encode($completado) !!}
 
         var main = new Vue({
             el : 'main',
             data: {
                 examen : examen,
+                completado: completado,
                 current_examen : null,
                 examen_info : {
                     estudiante : 'et dolorem qui',
@@ -153,8 +187,19 @@
                 current_tema : null,
                 current_pregunta : null,
                 date : null,
+                alert_type : null,
             },
             mounted: function(){
+
+                if(this.completado.length > 0 || this.examen.disponible == 0){
+                    if(this.completado.length > 0){
+                        this.alert_type = 'completado';
+                    }else{
+                        this.alert_type = 'disponible';
+                    }
+                    $('#AlertModal').modal('show')
+                }
+
                 if(window.innerWidth > 500){
                     $('#sidebar').toggleClass('active');
                 }
@@ -274,7 +319,15 @@
                 },
                 guardarRespuestas: function(){
                     var _this = this;
+                    $(".cancel_saving_button").LoadingOverlay("show");
                     axios.post(homepath + '/examenes/store/respuestas', {examen_id: this.examen.id, temas : this.current_examen}).then(function(response){
+                        $(".cancel_saving_button").LoadingOverlay("hide");
+                        swal({
+                            text: "{{__('¡Tus respuestas fueron guardadas!')}}",
+                            icon: "success",
+                        }).then(function(){
+                            window.location.href = homepath + '/examenes/completado/' + response.data;
+                        });
                         console.log(response.data)
                     }).catch(function(error){
                         console.log(error)

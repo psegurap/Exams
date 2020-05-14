@@ -34,7 +34,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('/store', 'ExamenController@store');
         Route::get('/llenar/{id}', 'ExamenController@llenar_examen');
         Route::get('/completado/{id}', 'ExamenController@examen_completado');
+        Route::get('/completado/calificar/{id}', 'ExamenController@calificar_completado');
         Route::post('/store/respuestas', 'ExamenController@store_respuestas');
+        Route::post('/store/calificacion', 'ExamenController@store_calificacion');
         Route::post('/update_campo/{campo}/{id}/{estado}', 'ExamenController@update_campo');
         Route::post('/completados/update_campo/{campo}/{id}/{estado}', 'ExamenController@completados_update_campo');
     });

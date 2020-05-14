@@ -68,6 +68,7 @@
                     window.open(homepath + '/examenes/completado/' + id, '_blank');
                 },
                 calificarExam: function(id){
+                    window.location.href = homepath + "/examenes/completado/calificar/" + id;
                     console.log(id);
                 },
                 initDataTable: function(){

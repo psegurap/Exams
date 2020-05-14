@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Auth;
 use App\User;
 use App\Examen;
 use App\Materia;
@@ -26,10 +27,20 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $exams = Examen::with(['materia_info' => function($materia){
+        $user = Auth::user()->with(['estudiante_materia' => function($materia){
             $materia->with('facilitador')->get();
-        }])->where('status', 1)->get();
-        return view('index', compact('exams'));
+        }])->find(Auth::user()->id);
+
+        $materia_id = $user->estudiante_materia[0]['id'];
+        $exams = Examen::with(['examenes_completados' => function($examen){
+            $examen->where('user_id', Auth::user()->id);
+        }, 'materia_info' => function($materia){
+            $materia->with(['facilitador', 'estudiante_materia' => function($estudiante){
+                $estudiante->where('estudiante_id', Auth::user()->id)->get();
+            }])->get();
+        }])->where('status', 1)->where('materia', $materia_id)->get();
+
+        return view('index', compact('exams', 'user'));
     }
 
     public function home()
@@ -39,22 +50,24 @@ class HomeController extends Controller
 
     public function panel_usuarios()
     {
-        $users = User::all();
+        $users = User::with('estudiante_materia')->get();
         $materias = Materia::where('status', 1)->get();
         return view('panel', compact('users', 'materias'));
     }
 
     public function update_estudiante($id, $materia)
     {
-        return [$id, $materia];
-        $users = User::all();
+        $user = User::find($id);
+        $user->estudiante_materia()->detach();
+        $user->estudiante_materia()->attach($materia);
+        $users = User::with('estudiante_materia')->get();
         return response()->json($users, 200);
     }
 
     public function update_rol($campo, $id, $status)
     {
         User::find($id)->update([$campo => $status ]);
-        $users = User::all();
+        $users = User::with('estudiante_materia')->get();
         return response()->json($users, 200);
     }
 }

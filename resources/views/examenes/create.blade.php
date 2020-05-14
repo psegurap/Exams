@@ -45,13 +45,9 @@
             </div>
             <div class="col-12 mb-4" v-if="template_info.temas.length > 0">
                 <div class="pb-1 border-bottom">
-                    {{-- <div class="border d-inline-block mb-1">
-                        <button class="btn btn-sm btn-light btn-section rounded-0 text-left active-section">Sint distinctio sit sit ex. Consectetur id commodi dolores at sit consequuntur soluta quis.</button>
-                    </div> --}}
                     <div v-for="tema in template_info.temas" class="border d-inline-block m-1 ">
                         <button @click="chooseTema(tema.id)" :class="[ tema.id == current_tema ? 'active-section' : '']" class="btn btn-sm btn-light btn-section rounded-0 text-left">@{{tema.nombre}}</button>
                     </div>
-                    
                 </div>
             </div>
             <div v-if="CurrentTema.length > 0" style="width: 100%;">
@@ -145,8 +141,10 @@
             </div>
             <div v-if="CurrentTema.length > 0 && CurrentTema[0].preguntas.length > 0" class="col-12 mb-2">
                 <div class="text-right">
-                    <button class="btn btn-success rounded-0 ml-2" @click="guardarExamen()" :disabled="template_info.name == '' || template_info.materia == '' || template_info.descripcion == ''">Guardar Examen</button>
-                    <button class="btn btn-danger rounded-0 ml-2">Cancelar</button>
+                    <div class="cancel_saving_button d-inline-block">
+                        <button class="btn btn-success rounded-0 ml-2" @click="guardarExamen()" :disabled="template_info.name == '' || template_info.materia == '' || template_info.descripcion == ''">Guardar Examen</button>
+                        <button class="btn btn-danger rounded-0 ml-2">Cancelar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -298,8 +296,12 @@
             computed : {
                 CurrentTema: function(){
                     var _this = this;
+                    this.preguntas = [];
                     return this.template_info.temas.filter(function(tema){
-                        _this.preguntas = tema.preguntas;
+                        _this_ = _this;
+                        tema.preguntas.forEach(function(pregunta){
+                            _this.preguntas.push(pregunta)
+                        });
                         return tema.id == _this.current_tema;
                     });
                 },
@@ -450,8 +452,15 @@
                 },
                 guardarExamen: function(){
                     var _this = this;
+                    $(".cancel_saving_button").LoadingOverlay("show");
                     axios.post(homepath + '/examenes/store', {template: this.template_info, temas : this.template_info.temas}).then(function(response){
-                        console.log(response.data)
+                        $(".cancel_saving_button").LoadingOverlay("hide");
+                        swal({
+                            text: "{{__('¡El examen ha sido creado!')}}",
+                            icon: "success",
+                        }).then(function(){
+                            window.location.href = homepath + '/examenes';
+                        });
                     }).catch(function(error){
                         console.log(error)
                     });

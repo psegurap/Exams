@@ -3024,6 +3024,28 @@ input[type="button"].btn-block {
     .custom-control-input:disabled ~ .custom-control-label::before {
       background-color: #e9ecef; }
 
+.custom-control-input-incorrect {
+  position: absolute;
+  z-index: -1;
+  opacity: 0; }
+  .custom-control-input-incorrect:checked ~ .custom-control-label::before {
+    color: #fff;
+    border-color: #ff0000;
+    background-color: #ff0000; }
+  .custom-control-input-incorrect:focus ~ .custom-control-label::before {
+    -webkit-box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25);
+    box-shadow: 0 0 0 0.2rem rgba(255, 0, 0, 0.25); }
+  .custom-control-input-incorrect:focus:not(:checked) ~ .custom-control-label::before {
+    border-color: #ff8080; }
+  .custom-control-input-incorrect:not(:disabled):active ~ .custom-control-label::before {
+    color: #fff;
+    background-color: #ffb3b3;
+    border-color: #ffb3b3; }
+  .custom-control-input-incorrect:disabled ~ .custom-control-label {
+    color: #7d6c6c; }
+    .custom-control-input-incorrect:disabled ~ .custom-control-label::before {
+      background-color: #efe9e9; }
+
 .custom-control-label {
   position: relative;
   margin-bottom: 0;

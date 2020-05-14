@@ -76,7 +76,6 @@ class ExamenController extends Controller
             $query->with('preguntas')->where('status', 1)->get();
         }])->find($id);
 
-        // dd($examen->temas);
         $examen->temas = $examen->temas->map(function($tema){
             $tema = $tema->preguntas->map(function($pregunta){
                 if($pregunta['select_options'] == null){
@@ -88,10 +87,11 @@ class ExamenController extends Controller
             });
             return $tema;
         });
-
         $examen->estudiante = Auth::user()->name;
 
-        return view('examenes.llenar_examen', compact('examen'));
+        $completado = ExamenCompletado::where('template_id', $examen->id)->where('user_id', Auth::user()->id)->get();
+
+        return view('examenes.llenar_examen', compact('examen', 'completado'));
     }
 
     public function store_respuestas(Request $request)
@@ -148,6 +148,37 @@ class ExamenController extends Controller
         // $examen_completado['created_at'] = date("m-d-Y", strtotime($examen_completado['created_at']));
 
         return view('examenes.completado', compact('examen_completado'));
+    }
+
+    public function calificar_completado($id)
+    {
+        $examen_completado = ExamenCompletado::with(['user:id,name', 'examen' => function($examen) use ($id){
+            $examen->with(['materia_info' => function($materia){
+                $materia->with('facilitador:id,name')->get();
+            }, 'temas' => function($tema) use ($id){
+                $tema->with(['preguntas' => function($pregunta) use ($id){
+                    $pregunta->with(['respuesta' => function($respuesta) use ($id){
+                        $respuesta->where('examen_completado_id', $id)->get();
+                    }])->get();
+                }])->get();
+            }])->get();
+        }])->find($id);
+
+        // $examen_completado->created_at = 'asdasasdd';
+        // $examen_completado['created_at'] = date("m-d-Y", strtotime($examen_completado['created_at']));
+
+        return view('examenes.calificar_examen', compact('examen_completado'));
+    }
+
+    public function store_calificacion(Request $request)
+    {
+        ExamenCompletado::find($request->examen['id'])->update(['calificacion_final' => $request->examen['calificacion'], 'notas' => $request->examen['notas']]);
+        foreach ($request->temas as $tema) {
+            foreach ($tema['preguntas'] as $pregunta) {
+                Respuesta::where('examen_completado_id', $request->examen['id'])->where('question_id', $pregunta['id'])->update(['respuesta_calificacion' => $pregunta['calificacion']]);
+            }
+        }
+        return response()->json('Done', 200);
     }
 
     public function update_campo($campo, $id, $status)

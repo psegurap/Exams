@@ -20,4 +20,9 @@ class Examen extends Model
     public function materia_info(){
         return $this->belongsTo('App\Materia', 'materia', 'id');
     }
+
+    public function examenes_completados()
+    {
+        return $this->hasMany('App\ExamenCompletado', 'template_id', 'id');
+    }
 }

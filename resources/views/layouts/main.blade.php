@@ -119,11 +119,12 @@
     <script src="{{asset('/js/moment.js')}}"></script>
     <script src="{{asset('/js/axios.js')}}"></script>
     <script src="{{asset('/js/sweetalert.min.js')}}"></script>
+    <script src="{{asset('/js/loadingoverlay.js')}}"></script>
     
     <script src="{{asset('/js/main.js')}}"></script>
 
     <script>
-      var homepath = "{{url('')}}";
+      var homepath = "{{url('/')}}";
 
     </script>
 

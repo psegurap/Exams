@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateEstudianteMateriaTable extends Migration
+class AddNotasColumn extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateEstudianteMateriaTable extends Migration
      */
     public function up()
     {
-        Schema::create('estudiante_materia', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->integer('estudiante_id');
-            $table->integer('materia_id');
-            $table->timestamps();
+        Schema::table('examenes_completados', function (Blueprint $table) {
+            $table->text('notas')->nullable();
         });
     }
 
@@ -28,6 +25,8 @@ class CreateEstudianteMateriaTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('estudiante_materia');
+        Schema::table('examenes_completados', function (Blueprint $table) {
+            //
+        });
     }
 }

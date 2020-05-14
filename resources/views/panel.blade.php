@@ -127,6 +127,7 @@
                     let estudiante = val[0];
                     if(estudiante){
                         this.estudiante.nombre = estudiante.name;
+                        this.estudiante.materia = estudiante.estudiante_materia[0].id;
                         // this.materia.facilitador = materia.facilitador_id;
                     }
                 }
@@ -164,7 +165,9 @@
                 updateEstudiante: function(){
                     var _this = this;
                     axios.post(homepath + '/usuarios/update_estudiante/' + this.CurrentEstudiante[0].id + '/' + this.estudiante.materia).then(function(response){
-                        // _this.users = response.data;
+                        _this.users = response.data;
+                        $('#EstudianteModal').modal('hide');
+                        _this.closeModal();
                     }).catch(function(error){
                         console.log(error)
                     });

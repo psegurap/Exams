@@ -17,4 +17,9 @@ class Materia extends Model
     {
         return $this->belongsTo('App\User', 'facilitador_id', 'id');
     }
+
+    public function estudiante_materia()
+    {
+        return $this->belongsToMany('App\User', 'estudiante_materia', 'materia_id', 'estudiante_id')->withTimestamps();
+    }
 }
