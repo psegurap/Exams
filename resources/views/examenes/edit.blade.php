@@ -142,7 +142,7 @@
             <div v-if="CurrentTema.length > 0 && CurrentTema[0].preguntas.length > 0" class="col-12 mb-2">
                 <div class="text-right">
                     <div class="cancel_saving_button d-inline-block">
-                        <button class="btn btn-success rounded-0 ml-2" @click="guardarExamen()" :disabled="template_info.name == '' || template_info.materia == '' || template_info.descripcion == ''">Guardar Examen</button>
+                        <button class="btn btn-success rounded-0 ml-2" @click="actuaizarExamen()" :disabled="template_info.name == '' || template_info.materia == '' || template_info.descripcion == ''">Actualizar Examen</button>
                         <button class="btn btn-danger rounded-0 ml-2">Cancelar</button>
                     </div>
                 </div>
@@ -252,11 +252,12 @@
     <script>
         Vue.use(VeeValidate);
 
-        function Tema(id, nombre, tipo){
+        function Tema(id, nombre, tipo, table_id){
             this.id = id;
             this.nombre = nombre;
             this.tipo = tipo;
             this.preguntas = [];
+            this.table_id = table_id;
         }
         
         function Pregunta(id, pregunta, opciones){
@@ -266,12 +267,14 @@
         }
 
         var materias = {!! json_encode($materias) !!};
+        var examen = {!! json_encode($examen) !!};
 
         var main = new Vue({
             el : 'main',
             data: {
                 materias : materias,
                 template_info : {
+                    id : null,
                     nombre : '',
                     materia : '',
                     descripcion : '',
@@ -292,6 +295,29 @@
                 adding_option : '',
                 current_pregunta : null,
                 preguntas : [],
+            },
+            mounted: function(){
+                var _this = this;
+                this.template_info.id = examen.id;
+                this.template_info.nombre = examen.nombre;
+                this.template_info.materia = examen.materia;
+                this.template_info.descripcion = examen.descripcion;
+                this.template_info.temas = examen.temas.map(function(tema){
+                    preguntas = tema.preguntas;
+                    tema = new Tema((_this.randomString() + new Date().getTime()), tema.nombre, tema.tipo_pregunta, tema.id);
+
+                    var _this_ = _this;
+
+                    tema.preguntas = preguntas.map(function(pregunta){
+                        if(pregunta.select_options == null){
+                            pregunta.select_options = [];
+                        }
+                        pregunta = new Pregunta((_this_.randomString() + new Date().getTime()), pregunta.pregunta, pregunta.select_options);
+                        return pregunta;
+                    })
+
+                    return tema;
+                })
             },
             computed : {
                 CurrentTema: function(){
@@ -363,27 +389,13 @@
                     this.openModal('TemaModal', 'edit', 'tema');
                 },
                 deleteTema: function(){
-                    var _this = this;
-                    swal({
-                        title: "¿Estas seguro?",
-                        text: "¡Esta materia va a ser eliminada!",
-                        // icon: "warning",
-                        buttons: ["Cancelar", "Aceptar"],
-                        dangerMode: true,
-                    })
-                    .then(function(willDelete){
-                        var _this_ = _this;
-                        if (willDelete) {
-                            for (let index = 0; index < _this.template_info.temas.length; index++) {
-                                if (_this.template_info.temas[index].id == _this.CurrentTema[0].id) {
-                                    _this.template_info.temas.splice(index, 1);
-                                    _this.CurrentTema = [];
-                                    break;
-                                }
-                            }
+                    for (let index = 0; index < this.template_info.temas.length; index++) {
+                        if (this.template_info.temas[index].id == this.CurrentTema[0].id) {
+                            this.template_info.temas.splice(index, 1);
+                            this.CurrentTema = [];
+                            break;
                         }
-                    });
-                    
+                    }
                 },
                 updateTema: function(){
                     var _this = this;
@@ -452,11 +464,23 @@
                     }, 100);
                 },
                 eliminarPregunta: function(id){
-                    var _this = this;
                     this.current_pregunta = id;
+                    for (let index = 0; index < this.template_info.temas.length; index++) {
+                        if (this.template_info.temas[index].id == this.CurrentTema[0].id) {
+                            for (let ind = 0; ind < this.template_info.temas[index].preguntas.length; ind++) {
+                                if (this.template_info.temas[index].preguntas[ind].id == this.CurrentPregunta[0].id) {
+                                    this.template_info.temas[index].preguntas.splice(ind, 1);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                },
+                actuaizarExamen: function(){
+                    var _this = this;
                     swal({
                         title: "¿Estas seguro?",
-                        text: "¡Esta pregunta va a ser eliminada!",
+                        text: "¡Esta acción eliminará toda informacion asociada a la estructura anterior!",
                         // icon: "warning",
                         buttons: ["Cancelar", "Aceptar"],
                         dangerMode: true,
@@ -464,34 +488,21 @@
                     .then(function(willDelete){
                         var _this_ = _this;
                         if (willDelete) {
-                            for (let index = 0; index < _this.template_info.temas.length; index++) {
-                                if (_this.template_info.temas[index].id == _this.CurrentTema[0].id) {
-                                    for (let ind = 0; ind < _this.template_info.temas[index].preguntas.length; ind++) {
-                                        if (_this.template_info.temas[index].preguntas[ind].id == _this.CurrentPregunta[0].id) {
-                                            _this.template_info.temas[index].preguntas.splice(ind, 1);
-                                            break;
-                                        }
-                                    }
-                                }
-                            }
+                            $(".cancel_saving_button").LoadingOverlay("show");
+                            axios.post(homepath + '/examenes/save_edit/' + _this.template_info.id, {template: _this.template_info, temas : _this.template_info.temas}).then(function(response){
+                                $(".cancel_saving_button").LoadingOverlay("hide");
+                                swal({
+                                    text: "{{__('¡El examen ha sido actualizado!')}}",
+                                    icon: "success",
+                                }).then(function(){
+                                    window.location.reload();
+                                });
+                            }).catch(function(error){
+                                console.log(error)
+                            });
                         }
                     });
                     
-                },
-                guardarExamen: function(){
-                    var _this = this;
-                    $(".cancel_saving_button").LoadingOverlay("show");
-                    axios.post(homepath + '/examenes/store', {template: this.template_info, temas : this.template_info.temas}).then(function(response){
-                        $(".cancel_saving_button").LoadingOverlay("hide");
-                        swal({
-                            text: "{{__('¡El examen ha sido creado!')}}",
-                            icon: "success",
-                        }).then(function(){
-                            window.location.href = homepath + '/examenes';
-                        });
-                    }).catch(function(error){
-                        console.log(error)
-                    });
                 },
                 validate: function(callback){
                     var _this = this;

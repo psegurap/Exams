@@ -13,13 +13,13 @@
                         <div class="col-lg-5 text-right">
                             <p v-if="exam.disponible == 0" class="bg-danger btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center">No Disponible</p>
                             <a v-else-if="exam.disponible == 1 && exam.examenes_completados.length == 0" :href="homepath + '/examenes/llenar/' + exam.id">
-                                <p class="bg-success btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center">Disponible</p>
+                                <p class="bg-success btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> Disponible</p>
                             </a>
                             <a v-else-if="exam.examenes_completados.length > 0 && exam.examenes_completados[0].calificacion_final == null" target="_blank" :href="homepath + '/examenes/completado/' + exam.examenes_completados[0].id">
-                                <p class="bg-warning btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center">Completado</p>
+                                <p class="bg-warning btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> Completado</p>
                             </a>
                             <a v-else-if="exam.examenes_completados.length > 0 && exam.examenes_completados[0].calificacion_final != null" target="_blank" :href="homepath + '/examenes/completado/' + exam.examenes_completados[0].id">
-                                <p class="bg-info btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center">Calificado</p>
+                                <p class="bg-info btn btn-sm text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-center"><i class="fa fa-hand-pointer-o" aria-hidden="true"></i> Calificado</p>
                             </a>
                         </div>
                     </div>

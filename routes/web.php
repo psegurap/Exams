@@ -32,6 +32,9 @@ Route::group(['middleware' => ['auth']], function(){
         Route::get('/create', 'ExamenController@create');
         Route::get('/completados', 'ExamenController@all_completados');
         Route::post('/store', 'ExamenController@store');
+        Route::post('/delete/{id}', 'ExamenController@delete_examen');
+        Route::get('/editar/{id}', 'ExamenController@editar_examen');
+        Route::post('/save_edit/{id}', 'ExamenController@save_edit');
         Route::get('/llenar/{id}', 'ExamenController@llenar_examen');
         Route::get('/completado/{id}', 'ExamenController@examen_completado');
         Route::get('/completado/calificar/{id}', 'ExamenController@calificar_completado');

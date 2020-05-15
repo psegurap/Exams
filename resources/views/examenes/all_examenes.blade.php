@@ -57,6 +57,13 @@
                     });
                 }, 1000);
             },
+            watch: {
+                examenes : function(val){
+                    this.dt.clear()
+                    this.dt.rows.add(val);
+                    this.dt.draw();
+                },
+            },
             methods: {
                 updateCampo: function(campo, id, estado){
                     estado = estado ? 1 : 0;
@@ -65,6 +72,42 @@
 
                     }).catch(function(error){
                         console.log(error)
+                    });
+                },
+                editTemplate: function(id){
+                    var _this = this;
+                    swal({
+                        title: "¿Estas seguro?",
+                        text: "¡Todo cambio a los examenes no es recomendado!",
+                        // icon: "warning",
+                        buttons: ["Cancelar", "Aceptar"],
+                        dangerMode: true,
+                    })
+                    .then(function(willDelete){
+                        var _this_ = _this;
+                        if (willDelete) {
+                            window.location.href = homepath + "/examenes/editar/" + id;
+                        }
+                    });
+                },
+                deleteTemplate: function(id){
+                    var _this = this;
+                    swal({
+                        title: "¿Estas seguro?",
+                        text: "¡Esta acción eliminará toda informacion asociada al examen!",
+                        // icon: "warning",
+                        buttons: ["Cancelar", "Aceptar"],
+                        dangerMode: true,
+                    })
+                    .then(function(willDelete){
+                        var _this_ = _this;
+                        if (willDelete) {
+                            axios.post(homepath + '/examenes/delete/' + id).then(function(response){
+                                _this_.examenes = response.data;
+                            }).catch(function(error){
+                                console.log(error)
+                            });
+                        }
                     });
                 },
                 initDataTable: function(){

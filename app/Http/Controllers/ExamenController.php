@@ -68,6 +68,30 @@ class ExamenController extends Controller
         return response()->json($examen, 200);
     }
 
+    public function delete_examen($id)
+    {
+        Examen::find($id)->forceDelete();
+        $current_temas = Tema::where('examen_id', $id)->get();
+        foreach ($current_temas as $tema ) {
+            Pregunta::where('tema_id', $tema['id'])->forceDelete();
+        }
+        Tema::where('examen_id', $id)->forceDelete();
+
+        $completados = ExamenCompletado::where('template_id', $id)->get();
+        if($completados){
+            foreach ($completados as $completado ) {
+                Respuesta::where('examen_completado_id', $completado->id)->forceDelete();
+            }
+            ExamenCompletado::where('template_id', $id)->forceDelete();
+        }
+
+        $examenes = Examen::with(['materia_info' => function($materia){
+            $materia->with('facilitador:id,name')->get();
+        }])->get();
+
+        return response()->json($examenes, 200);
+    }
+
     public function llenar_examen($id)
     {
         $examen = Examen::with(['materia_info' => function($materia){
@@ -92,6 +116,77 @@ class ExamenController extends Controller
         $completado = ExamenCompletado::where('template_id', $examen->id)->where('user_id', Auth::user()->id)->get();
 
         return view('examenes.llenar_examen', compact('examen', 'completado'));
+    }
+
+    public function editar_examen($id)
+    {
+        $materias = Materia::where('status', 1)->get();
+        $examen = Examen::with(['materia_info' => function($materia){
+            $materia->with('facilitador')->get();
+        }, 'temas' => function($query){
+            $query->with('preguntas')->where('status', 1)->get();
+        }])->find($id);
+
+        $examen->temas = $examen->temas->map(function($tema){
+            $tema = $tema->preguntas->map(function($pregunta){
+                if($pregunta['select_options'] == null){
+                    return $pregunta;
+                }else{
+                    $pregunta['select_options'] = explode('||', $pregunta['select_options']);
+                    return $pregunta;
+                }
+            });
+            return $tema;
+        });
+
+        return view('examenes.edit', compact('examen', 'materias'));
+    }
+
+    public function save_edit(Request $request, $id)
+    {
+        $temas = $request->temas;
+        Examen::find($id)->update(['nombre' => $request->template['nombre'], 'materia' => $request->template['materia'], 'descripcion' => $request->template['descripcion']]);
+        $current_temas = Tema::where('examen_id', $id)->get();
+        foreach ($current_temas as $tema ) {
+            Pregunta::where('tema_id', $tema['id'])->forceDelete();
+        }
+        Tema::where('examen_id', $id)->forceDelete();
+
+        $completados = ExamenCompletado::where('template_id', $id)->get();
+        if($completados){
+            foreach ($completados as $completado ) {
+                Respuesta::where('examen_completado_id', $completado->id)->forceDelete();
+            }
+            ExamenCompletado::where('template_id', $id)->forceDelete();
+        }
+
+
+        foreach ($temas as $tema) {
+            $tema_info = [
+                'nombre' => $tema['nombre'],
+                'tipo_pregunta' => $tema['tipo'],
+                'examen_id' => $id,
+                'status' => 1,
+            ];
+            $created_tema = Tema::create($tema_info);
+
+            foreach ($tema['preguntas'] as $pregunta) {
+                if(count($pregunta['opciones']) > 0){
+                    $opciones = implode('||', $pregunta['opciones']);
+                }else{
+                    $opciones = null;
+                }
+                $pregunta_info = [
+                    'pregunta' => $pregunta['pregunta'],
+                    'select_options' => $opciones,
+                    'tema_id' =>$created_tema->id,
+                    'status' => 1,
+                ];
+                Pregunta::create($pregunta_info);
+            }
+        }
+
+        return $request;
     }
 
     public function store_respuestas(Request $request)

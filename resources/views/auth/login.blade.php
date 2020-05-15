@@ -12,9 +12,9 @@
                         @csrf
                         <div class="form-group row">
                             <div class="col-md-12">
-                                <input id="email" type="email" class="form-control single-input-form @error('email') is-invalid @enderror" placeholder="Introduce tu usuario..." name="email" value="{{ old('email') }}" required autocomplete="email" autofocus>
+                                <input id="email" type="text" class="form-control single-input-form @error('username') is-invalid @enderror" placeholder="Introduce tu usuario..." name="username" value="{{ old('username') }}" required autocomplete="username" autofocus>
 
-                                @error('email')
+                                @error('username')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>

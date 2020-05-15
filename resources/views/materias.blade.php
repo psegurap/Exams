@@ -151,6 +151,7 @@
                     });
                 },
                 agregarMateria: function(){
+                    $(".modal-content").LoadingOverlay("show");
                     var _this = this;
                     axios.post(homepath + '/materias/store', {materia : this.materia}).then(function(response){
                         _this.materias = response.data;
@@ -159,6 +160,7 @@
                         setTimeout(function() {
                             _this.errors.clear();
                         }, 100);
+                        $(".modal-content").LoadingOverlay("hide");
                         $('#MateriaModal').modal('hide');
                     }).catch(function(error){
                         console.log(error)
@@ -169,6 +171,7 @@
                     this.openModal('MateriaModal', 'edit');
                 },
                 updateMateria: function(){
+                    $(".modal-content").LoadingOverlay("show");
                     var _this = this;
                     axios.post(homepath + '/materias/update/' + this.current_materia, {materia : this.materia}).then(function(response){
                         _this.materias = response.data;
@@ -177,6 +180,7 @@
                         setTimeout(function() {
                             _this.errors.clear();
                         }, 100);
+                        $(".modal-content").LoadingOverlay("hide");
                         $('#MateriaModal').modal('hide');
                     }).catch(function(error){
                         console.log(error)
@@ -184,10 +188,23 @@
                 },
                 deleteMateria: function(id){
                     var _this = this;
-                    axios.post(homepath + '/materias/delete/' + id).then(function(response){
-                        _this.materias = response.data;
-                    }).catch(function(error){
-                        console.log(error)
+                    swal({
+                        title: "¿Estas seguro?",
+                        text: "¡Esta materia va a ser eliminada!",
+                        // icon: "warning",
+                        cancelButtonText : 'Cancelar',
+                        buttons: ["Cancelar", "Aceptar"],
+                        dangerMode: true,
+                    })
+                    .then(function(willDelete){
+                        var _this_ = _this;
+                        if (willDelete) {
+                            axios.post(homepath + '/materias/delete/' + id).then(function(response){
+                                _this_.materias = response.data;
+                            }).catch(function(error){
+                                console.log(error)
+                            });
+                        }
                     });
                 },
                 initDataTable: function(){

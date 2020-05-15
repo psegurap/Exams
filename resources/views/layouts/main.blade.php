@@ -17,49 +17,40 @@
     @yield('styles')
   </head>
   <body>
-		
 		<div class="wrapper d-flex align-items-stretch">
 			<nav id="sidebar" class="d-flex">
 				<div class="d-flex flex-column justify-content-between p-4">
-		  		{{-- <a href="#" class="img logo rounded-circle mb-5" style="background-image: url(images/logo.jpg);"></a> --}}
 	        <ul class="list-unstyled components mb-5">
-	          {{-- <li class="active">
-	            <a href="#homeSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Home</a>
-	            <ul class="collapse list-unstyled" id="homeSubmenu">
-                <li>
-                    <a href="#">Home 1</a>
-                </li>
-                <li>
-                    <a href="#">Home 2</a>
-                </li>
-                <li>
-                    <a href="#">Home 3</a>
-                </li>
-	            </ul>
-	          </li> --}}
+
 	          <li>
               <a href="{{route('index')}}">Inicio</a>
             </li>
-            <li>
-              <a href="{{route('materias')}}">Materias</a>
-            </li>
-            <li>
-              <a href="#examenSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Examenes</a>
-              <ul class="collapse list-unstyled" id="examenSubmenu">
-                <li>
-                    <a href="/examenes">Todos</a>
-                </li>
-                <li>
-                    <a href="/examenes/create">Nuevo Examen</a>
-                </li>
-                <li>
-                    <a href="/examenes/completados">Completados</a>
-                </li>
-              </ul>
-            </li>
-            <li>
-              <a href="{{route('panel_usuarios')}}">Panel De Usuarios</a>
-            </li>
+            @if (Auth::user()->administrador == 1)
+              <li>
+                <a href="{{route('materias')}}">Materias</a>
+              </li>
+            @endif
+            @if (Auth::user()->administrador == 1 || Auth::user()->facilitador == 1)
+              <li>
+                <a href="#examenSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Examenes</a>
+                <ul class="collapse list-unstyled" id="examenSubmenu">
+                  <li>
+                      <a href="/examenes">Todos</a>
+                  </li>
+                  <li>
+                      <a href="/examenes/create">Nuevo Examen</a>
+                  </li>
+                  <li>
+                      <a href="/examenes/completados">Completados</a>
+                  </li>
+                </ul>
+              </li>
+            @endif
+            @if (Auth::user()->administrador == 1)
+              <li>
+                <a href="{{route('panel_usuarios')}}">Panel De Usuarios</a>
+              </li>
+            @endif
 	        </ul>
 	        <div class="footer">
 	        	<p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
@@ -67,10 +58,8 @@
 						  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
 						  {{-- Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a href="http://seguratesting.com/" target="_blank">Pedro Segura</a> --}}
             </div>
-
 	      </div>
     	</nav>
-
         <!-- Page Content  -->
       <div id="content" class="">
 
@@ -81,10 +70,6 @@
               <i class="fa fa-bars"></i>
               <span class="sr-only">Toggle Menu</span>
             </button>
-            {{-- <button class="btn btn-dark d-inline-block d-lg-none ml-auto" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                <i class="fa fa-bars"></i>
-            </button> --}}
-
             <div>
               <ul class="nav navbar-nav ml-auto flex-row">
                 <li class="nav-item active">
@@ -103,7 +88,6 @@
         <section class="p-3">
           @yield('content')
         </section>
-      
       </div>
 		</div>
 
