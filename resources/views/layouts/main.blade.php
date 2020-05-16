@@ -75,12 +75,18 @@
                 <li class="nav-item active">
                   <span class="nav-link">{{Auth::user()->name}}</span>
                 </li>
+                <li class="nav-item align-self-center">
+                  <a href="/password/change">
+                    <i class="fa fa-key btn btn-link text-warning btn-sm text-decoration-none" aria-hidden="true"></i>
+                  </a>
+                </li>
                 <li class="nav-item align-self-center" style="cursor: pointer">
                   <i onclick="event.preventDefault(); document.getElementById('logout-form').submit();" class="fa fa-power-off btn btn-link btn-sm text-decoration-none" aria-hidden="true"></i>
                 </li>
                 <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
                   @csrf
                 </form> 
+                
               </ul>
             </div>
           </div>

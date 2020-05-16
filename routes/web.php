@@ -55,6 +55,11 @@ Route::group(['middleware' => ['auth']], function(){
         Route::post('/update_campo/{campo}/{id}/{estado}', 'MateriaController@update_campo');
 
     });
+
+    Route::group(['prefix' => 'password'], function(){
+        Route::get('change', 'ChangePasswordController@index');
+        Route::post('change', 'ChangePasswordController@store')->name('change.password');
+    });
 });
 
 

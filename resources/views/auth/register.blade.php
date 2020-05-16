@@ -1,7 +1,7 @@
-@extends('layouts.app')
-
+@extends('layouts.main')
+@section('title')Registrar Usuario @endsection
 @section('content')
-<div class="container">
+<div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-5">
             <div class="border-bottom rounded-bottom">
