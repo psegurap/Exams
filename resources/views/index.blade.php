@@ -3,7 +3,7 @@
 @section('content')
     <main>
         <div class="row">
-            <div v-if="exams.length > 0" v-for="(exam, index) in exams" class="col-md-6 mt-2">
+            <div v-if="exams.length > 0 && user.facilitador != 1" v-for="(exam, index) in exams" class="col-md-6 mt-2">
                 <div class="test-records">
                     <div class="row">
                         <div class="col-lg-7 text-info">
@@ -27,7 +27,7 @@
                     </a> --}}
                 </div>
             </div>
-            <div v-if="exams.length == 0" class="col-md-6 mt-2">
+            <div v-if="exams.length == 0 && user.facilitador != 1" class="col-md-6 mt-2">
                 <div class="test-records">
                     <div class="row">
                         <div class="col-lg-7 text-info">
@@ -42,6 +42,21 @@
                     </a> --}}
                 </div>
             </div>
+            
+        </div>
+        <div v-if="user.facilitador == 1 && estudiantes.length > 0" class="row">
+            <div class="col-md-12 mb-2">
+                <div class="header-pages text-white text-uppercase rounded-top">Estudiantes</div>
+            </div>
+            <div v-for="estudiante in estudiantes[0].estudiante_materia" class="col-md-3 mt-2">
+                <div class="test-records rounded">
+                    <div class="row">
+                        <div class="col-lg-12 text-info text-center">
+                            <p class="bg-info btn text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-left">@{{estudiante.name}}</p>
+                        </div>
+                    </div>
+                </div> 
+            </div>
         </div>
     </main>
 @endsection
@@ -50,11 +65,15 @@
     <script>
         var exams = {!! json_encode($exams) !!}
         var user = {!! json_encode($user) !!}
+        var estudiantes = {!! json_encode($estudiantes) !!}
+        
 
         var main = new Vue({
             el: 'main',
             data: {
                 exams : exams,
+                estudiantes : estudiantes,
+                user : user,
             },
             mounted: function(){
                 

@@ -40,8 +40,8 @@
                         </div> --}}
                         <div class="col-md-6">
                             <div class="form-group mb-1">
-                                <label class="mb-0" for="">Calificacion final:</label>
-                                <input type="text"  v-model="examen.calificacion" class="form-control single-input-form" id="calificacion" placeholder="Coloca la calificación final...">
+                                <label class="mb-0" for="">Calificacion:</label>
+                                <input type="text"  v-model="examen.calificacion" class="form-control single-input-form" id="calificacion" placeholder="Coloca la calificación...">
                             </div>
                         </div>
                         <div class="col-md-12">
@@ -250,7 +250,7 @@
                     var completado = true;
                     for (let index = 0; index < this.examen_completado.examen.temas.length; index++) {
                         for (let ind = 0; ind < this.examen_completado.examen.temas[index].preguntas.length; ind++) {
-                            if (this.examen_completado.examen.temas[index].preguntas[ind].calificacion === '') {
+                            if (this.examen_completado.examen.temas[index].preguntas[ind].calificacion === '' || this.examen_completado.examen.temas[index].preguntas[ind].calificacion == null) {
                                 completado = false;
                                 break;
                             }

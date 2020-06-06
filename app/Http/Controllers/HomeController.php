@@ -31,7 +31,16 @@ class HomeController extends Controller
             $materia->with('facilitador')->get();
         }])->find(Auth::user()->id);
 
-        $materia_id = $user->estudiante_materia[0]['id'];
+        $estudiantes = [];
+        if(Auth::user()->facilitador == 1){
+            $estudiantes = Materia::with(['estudiante_materia' => function($estudiante){
+                $estudiante->where('estudiante', 1)->orderBy('name', 'asc')->get();
+            }])->where('facilitador_id', Auth::user()->id)->get();
+        }
+        $materia_id = null;
+        if(count($user->estudiante_materia)){
+            $materia_id = $user->estudiante_materia[0]['id'];
+        }
         $exams = Examen::with(['examenes_completados' => function($examen){
             $examen->where('user_id', Auth::user()->id);
         }, 'materia_info' => function($materia){
@@ -40,7 +49,7 @@ class HomeController extends Controller
             }])->get();
         }])->where('status', 1)->where('materia', $materia_id)->get();
 
-        return view('index', compact('exams', 'user'));
+        return view('index', compact('exams', 'user', 'estudiantes'));
     }
 
     public function home()

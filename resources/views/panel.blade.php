@@ -175,6 +175,7 @@
                 initDataTable: function(){
                     this.dt = $('#table').DataTable({
                         data : this.users,
+                        paging: false,
                         // responsive : true,
                         columns: [
                             {data : 'id'},

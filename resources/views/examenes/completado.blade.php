@@ -39,9 +39,15 @@
                             </div>
                         </div>
                         <div class="col-md-12">
+                            <div class="form-group mb-1">
+                                <label class="mb-0">Notas Adicionales:</label>
+                                <textarea disabled name="" id="" :value="examen_completado.notas" cols="30" rows="5" class="form-control single-area-form" placeholder="No hay notas adicionales."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
                             <div class="mt-2">
                                 <div class="d-inline-block">
-                                    <span class="btn btn-primary btn-section btn-sm rounded-0 text-light waves-effect waves-light">Calificación final:</span>
+                                    <span class="btn btn-primary btn-section btn-sm rounded-0 text-light waves-effect waves-light">Calificación:</span>
                                     <span v-if="examen_completado.calificacion_final != null" class="btn btn-sm btn-success btn-section rounded-0">@{{examen_completado.calificacion_final}}</span>
                                     <span v-else class="btn btn-sm btn-danger btn-section rounded-0">No Disponible</span>
                                 </div>

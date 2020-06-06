@@ -9,7 +9,7 @@
 		
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
     
-    <link rel="shortcut icon" href="{{('/images/icono.png')}}" type="image/x-icon">
+    <link rel="shortcut icon" href="{{('/images/favicon.ico')}}" type="image/x-icon">
     <link rel="stylesheet" href="{{asset('/fonts/font-awesome/css/font-awesome.min.css')}}">
     <link rel="stylesheet" href="{{asset('/css/dataTables.bootstrap4.min.css')}}">
     <link rel="stylesheet" href="{{asset('/css/jquery.toast.css')}}">
@@ -34,12 +34,16 @@
               <li>
                 <a href="#examenSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Examenes</a>
                 <ul class="collapse list-unstyled" id="examenSubmenu">
+                  @if (Auth::user()->administrador == 1)
                   <li>
                       <a href="/examenes">Todos</a>
                   </li>
+
                   <li>
                       <a href="/examenes/create">Nuevo Examen</a>
                   </li>
+                  @endif
+
                   <li>
                       <a href="/examenes/completados">Completados</a>
                   </li>
@@ -54,9 +58,9 @@
 	        </ul>
 	        <div class="footer">
 	        	<p><!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
-						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a>
+              {{-- Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made with <i class="icon-heart" aria-hidden="true"></i> by <a href="https://colorlib.com" target="_blank">Colorlib.com</a> --}}
 						  <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. --></p>
-						  {{-- Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a href="http://seguratesting.com/" target="_blank">Pedro Segura</a> --}}
+						  Copyright &copy;<script>document.write(new Date().getFullYear());</script> All rights reserved | <a href="http://seguratesting.com/" target="_blank">Pedro Segura</a>
             </div>
 	      </div>
     	</nav>
