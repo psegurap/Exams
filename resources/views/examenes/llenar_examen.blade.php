@@ -38,10 +38,15 @@
                                 <input disabled type="text" :value="date" class="form-control single-input-form" placeholder="Coloca el nombre del examen...">
                             </div>
                         </div>
-                        <div class="col-md-12">
+                        <div class="col-md-10">
                             <div class="form-group mb-1">
                                 <label class="mb-0" for="">Descripción:</label>
                                 <textarea disabled :value="examen.descripcion" name="" id="" cols="30" rows="4" class="form-control single-area-form" placeholder="Coloca la descripcion del examen..."></textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-2 align-items-end d-flex">
+                            <div>
+                                <p style="font-size: 4em;" class="font-weight-bold mb-0" id="timer">00:00</p>
                             </div>
                         </div>
                     </div>
@@ -54,7 +59,7 @@
                             <div class="header-pages" style="background-color: #17a2b8;">
                                 <div class="row">
                                     <div class="col-md-12">
-                                        <p class="mb-0 text-white">@{{tema.nombre}}</p>
+                                        <p  class="mb-0 text-white">@{{tema.nombre}}</p>
                                     </div>
                                 </div>
                             </div>
@@ -131,6 +136,7 @@
                                 <div class="align-items-center d-flex justify-content-between">
                                     <span v-if="alert_type == 'completado'" class="font-weight-bold">Ya has completado esta prueba anteriormente.</span>
                                     <span v-if="alert_type == 'disponible'" class="font-weight-bold">Esta prueba no se encuentra disponible.</span>
+                                    <span v-if="alert_type == 'unavailable'" class="font-weight-bold">Esta prueba ya se encuentra cerrada.</span>
                                     <div class="border d-inline-block m-1 ">
                                         <a :href="homepath">
                                             <button class="btn btn-sm btn-danger btn-section rounded-0">Regresar</button>
@@ -140,11 +146,6 @@
                             </aside>
                         </section>
                     </div>
-                    {{-- <div class="modal-footer">
-                        <button v-if="pregunta_view == 'create'" type="button" @click="validate(agregarPregunta)" class="btn btn-info btn-sm rounded-0">{{__('Agregar')}}</button>
-                        <button v-if="pregunta_view == 'edit'" type="button" @click="validate(updatePregunta)" class="btn btn-warning btn-sm rounded-0">{{__('Actualizar')}}</button>
-                        <button type="button" class="btn btn-danger btn-sm rounded-0" @click="closeModal()" data-dismiss="modal">{{__('Cerrar')}}</button>
-                    </div> --}}
                 </div>
             </div>
         </div>
@@ -236,6 +237,23 @@
                     });
 
                 }, 1000);
+
+                var timer_date;
+                if(window.localStorage.getItem('timer_date')){
+                    timer_date = window.localStorage.getItem('timer_date');
+                }else{
+                    window.localStorage.setItem('timer_date', moment(new Date()).add(10, 'm').format('YYYY/MM/DD HH:mm:ss'));
+                    timer_date = window.localStorage.getItem('timer_date');
+                }
+                
+                setTimeout(function () {
+                    $('#timer').countdown(timer_date, function(event) {
+                        $(this).html(event.strftime('%M:%S'));
+                    }).on('finish.countdown', function(){
+                        _this.alert_type = 'unavailable';
+                        $('#AlertModal').modal('show')
+                    });
+                }, 500);
             },
             computed : {
                 CurrentTema: function(){
@@ -326,11 +344,24 @@
                             text: "{{__('¡Tus respuestas fueron guardadas!')}}",
                             icon: "success",
                         }).then(function(){
+                            window.localStorage.removeItem('timer_date');
                             window.location.href = homepath + '/examenes/completado/' + response.data;
                         });
                         console.log(response.data)
                     }).catch(function(error){
-                        console.log(error)
+                        if(error.response.data == 'unavailable'){
+                            _this.alert_type = 'unavailable';
+                            $('#AlertModal').modal('show')
+                        }else{
+                            $.toast({
+                                heading: 'Error',
+                                text: '{{__("Ha ocurrido un error guardando las respuestas.")}}',
+                                showHideTransition: 'fade',
+                                icon: 'error',
+                                position : 'top-right'
+                            })
+                            console.log(error.response.data)
+                        }
                     });
                 },
                 validate: function(callback){

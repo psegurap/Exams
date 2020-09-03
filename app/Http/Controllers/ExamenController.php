@@ -191,28 +191,34 @@ class ExamenController extends Controller
 
     public function store_respuestas(Request $request)
     {
-        $temas =  $request->temas;
-
-        $examen_data = [
-            'template_id' => $request->examen_id,
-            'user_id' => Auth::user()->id,
-            'status' => 1
-        ];
-        $examen_completado = ExamenCompletado::create($examen_data);
-
-        foreach ($temas as $tema) {
-            foreach ($tema['preguntas'] as $pregunta) {
-                
-                $respuesta_info = [
-                    'examen_completado_id' => $examen_completado->id,
-                    'question_id' => $pregunta['id'],
-                    'respuesta' => $pregunta['respuesta'],
-
-                ];
-                Respuesta::create($respuesta_info);
+        // return $request;
+        $curren_examen = Examen::find($request->examen_id);
+        if($curren_examen->disponible == 0){
+            return response()->json('unavailable', 401);
+        }else{
+            $temas =  $request->temas;
+    
+            $examen_data = [
+                'template_id' => $request->examen_id,
+                'user_id' => Auth::user()->id,
+                'status' => 1
+            ];
+            $examen_completado = ExamenCompletado::create($examen_data);
+    
+            foreach ($temas as $tema) {
+                foreach ($tema['preguntas'] as $pregunta) {
+                    
+                    $respuesta_info = [
+                        'examen_completado_id' => $examen_completado->id,
+                        'question_id' => $pregunta['id'],
+                        'respuesta' => $pregunta['respuesta'],
+    
+                    ];
+                    Respuesta::create($respuesta_info);
+                }
             }
+            return response()->json($examen_completado->id, 200);
         }
-        return response()->json($examen_completado->id, 200);
     }
 
     public function all_completados()
