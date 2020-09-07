@@ -41,4 +41,9 @@ class User extends Authenticatable
     {
         return $this->belongsToMany('App\Materia', 'estudiante_materia', 'estudiante_id', 'materia_id')->withTimestamps();
     }
+
+    public function examen_completado()
+    {
+        return $this->hasOne('App\ExamenCompletado', 'user_id', 'id');
+    }
 }

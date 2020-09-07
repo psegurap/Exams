@@ -48,11 +48,29 @@
             <div class="col-md-12 mb-2">
                 <div class="header-pages text-white text-uppercase rounded-top">Estudiantes</div>
             </div>
-            <div v-for="estudiante in estudiantes[0].estudiante_materia" class="col-md-3 mt-2">
+            <div v-for="estudiante in estudiantes[0].estudiante_materia" class="col-md-6 mt-2">
                 <div class="test-records rounded">
                     <div class="row">
-                        <div class="col-lg-12 text-info text-center">
-                            <p class="bg-info btn text-white btn-section d-inline-block mb-1 px-2 rounded-0 text-left">@{{estudiante.name}}</p>
+                        <div class="col-lg-12 text-info">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <p class="bg-info btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Estudiante:</p> <span class="ml-1 bg-dark btn btn-section rounded-0 text-white waves-effect waves-light mb-1">@{{estudiante.name}}</span>
+                                </div>
+                                <div v-if="estudiante.examen_completado != null">
+                                    <a title="CALIFICAR" class="btn btn-outline-warning btn-section" :href="homepath + '/examenes/completado/calificar/' + estudiante.examen_completado.id">
+                                        <i class='fa fa-pencil fa-lg'></i>
+                                    </a>
+                                    <a title="VISUALIZAR" class="btn btn-outline-primary btn-section" :href="homepath + '/examenes/completado/' + estudiante.examen_completado.id">
+                                        <i class='fa fa-eye fa-lg'></i>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="text-right mt-2">
+                                <p class="bg-info btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Estado Exanen:</p> 
+                                <span v-if="estudiante.examen_completado != null && estudiante.examen_completado.calificacion_final != null" class="ml-1 bg-warning btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Calificado</span>
+                                <span v-else-if="estudiante.examen_completado != null" class="ml-1 bg-success btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Completado</span>
+                                <span v-else class="ml-1 bg-danger btn btn-section rounded-0 text-white waves-effect waves-light mb-1">No Completado</span>
+                            </div>
                         </div>
                     </div>
                 </div> 

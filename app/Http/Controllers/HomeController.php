@@ -15,16 +15,17 @@ class HomeController extends Controller
      *
      * @return void
      */
-    // public function __construct()
-    // {
-    //     $this->middleware('auth');
-    // }
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
 
     /**
      * Show the application dashboard.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
+
     public function index()
     {
         $user = Auth::user()->with(['estudiante_materia' => function($materia){
@@ -34,7 +35,7 @@ class HomeController extends Controller
         $estudiantes = [];
         if(Auth::user()->facilitador == 1){
             $estudiantes = Materia::with(['estudiante_materia' => function($estudiante){
-                $estudiante->where('estudiante', 1)->orderBy('name', 'asc')->get();
+                $estudiante->with('examen_completado')->where('estudiante', 1)->orderBy('name', 'asc')->get();
             }])->where('facilitador_id', Auth::user()->id)->get();
         }
         $materia_id = null;
@@ -51,6 +52,7 @@ class HomeController extends Controller
 
         return view('index', compact('exams', 'user', 'estudiantes'));
     }
+
 
     public function home()
     {
