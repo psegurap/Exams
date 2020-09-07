@@ -93,8 +93,8 @@
                                                                 </div>
                                                                 <div class="form-group" v-if="tema.tipo == 'selectMultiple'">
                                                                     <div v-for="(opcion, ind) in _pregunta.opciones" class="custom-control custom-radio custom-control-inline">
-                                                                        <input type="radio" class="custom-control-input" :pregunta_info="[tema.id, _pregunta.id, opcion]" :id="'SelecMultiple' + index + ind" :name="'SelecMultiple' + index">
-                                                                        <label class="custom-control-label" :for="'SelecMultiple' + index + ind">@{{opcion}}</label>
+                                                                        <input type="radio" class="custom-control-input" :pregunta_info="[tema.id, _pregunta.id, opcion]" :id="'SelecMultiple' + index + ind + _pregunta.id" :name="'SelecMultiple' + index + _pregunta.id">
+                                                                        <label class="custom-control-label" :for="'SelecMultiple' + index + ind + _pregunta.id">@{{opcion}}</label>
                                                                     </div>
                                                                 </div>
                                                                 <div class="form-group" v-if="tema.tipo == 'texto_libre'">

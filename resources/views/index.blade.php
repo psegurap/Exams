@@ -54,7 +54,7 @@
                         <div class="col-lg-12 text-info">
                             <div class="d-flex flex-column flex-md-row justify-content-between">
                                 <div>
-                                    <p class="bg-info btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Estudiante:</p> <span class="ml-1 bg-dark btn btn-section rounded-0 text-white waves-effect waves-light mb-1">@{{estudiante.name}}</span>
+                                    <p class="bg-info btn btn-section rounded-0 text-white waves-effect waves-light mb-1 mr-1">Estudiante:</p> <span class="bg-dark btn btn-section rounded-0 text-white waves-effect waves-light mb-1">@{{estudiante.name}}</span>
                                 </div>
                                 <div v-if="estudiante.examen_completado != null">
                                     <a title="CALIFICAR" class="btn btn-outline-warning btn-section" :href="homepath + '/examenes/completado/calificar/' + estudiante.examen_completado.id">
