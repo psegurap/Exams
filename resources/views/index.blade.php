@@ -52,7 +52,7 @@
                 <div class="test-records rounded">
                     <div class="row">
                         <div class="col-lg-12 text-info">
-                            <div class="d-flex justify-content-between">
+                            <div class="d-flex flex-column flex-md-row justify-content-between">
                                 <div>
                                     <p class="bg-info btn btn-section rounded-0 text-white waves-effect waves-light mb-1">Estudiante:</p> <span class="ml-1 bg-dark btn btn-section rounded-0 text-white waves-effect waves-light mb-1">@{{estudiante.name}}</span>
                                 </div>
