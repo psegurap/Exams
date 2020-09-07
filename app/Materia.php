@@ -22,4 +22,8 @@ class Materia extends Model
     {
         return $this->belongsToMany('App\User', 'estudiante_materia', 'materia_id', 'estudiante_id')->withTimestamps();
     }
+
+    public function examenes(){
+        return $this->hasMany('App\Examen', 'materia', 'id');
+    }
 }
